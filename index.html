@@ -133,12 +133,12 @@
       sun.position.set(50, 15, 50);
       scene.add(sun);*/
 
-      camera.position.z = 4;
+      camera.position.z = 2;
 
       var controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enablePan = false;
-      controls.minDistance = 2;
-      controls.maxDistance = 30;
+      controls.minDistance = 1.3;
+      controls.maxDistance = 5;
 
       var start = null;
       var wsEarthPosition = new THREE.Vector3();
