@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weathearth</title>
+	<meta charset="utf-8">
+	<script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+	<pre id="json"></pre>
+
+	<table border=1>
+		<tr>
+			<th>Coordonnées</th>
+			<th>Température</th>
+		</tr>
+		<tr>
+			<td id="coordonnees"></td>
+			<td id="temperature"></td>
+		</tr>
+	</table>
+	<button class="location" lat='40.741895' long='-73.989308'>New York, NY, USA</button>
+	<button class="location" lat='45.764043' long='4.835659'>Lyon, France</button>
+	<button class="location" lat='44.923234' long='2.802928'>Saint-Martin-sous-Vigouroux, France</button>
+	<button class="location" lat='44.837789' long='-0.57918'>Bordeaux, France</button>
+	<button class="location" lat='35.011636' long='135.768029'>Kyoto, Kyoto Prefecture, Japan</button>
+
+</body>
+
+<script type="text/javascript">
+
+	$("#json").text('...');
+	$("#coordonnees").text('...');
+	$("#temperature").text('...');
+
+	$('.location').click(function(){
+		getWeather($(this).attr('lat'), $(this).attr('long'));
+	});
+
+	function getWeather(lat = 44.8555246, long = -0.572642) {
+
+		var coordonnees = '('+lat+', '+long+')';
+		json = getJsonFromApi(lat, long);
+		var data = jQuery.parseJSON(json);
+		var temperature = getTemperature(data);
+
+		$("#json").text(json);
+		$("#coordonnees").text(coordonnees);
+		$("#temperature").text(temperature);
+	}
+
+	function getTemperature(data) {
+		if (data.currently.apparentTemperature !== 0) {
+			return data.currently.apparentTemperature+'°C';
+		}
+		return false;
+	}
+
+	function getJsonFromApi(lat, long) {
+		var result = '';
+		if (lat.length !== 0 && long.length !== 0) {
+	        $.ajax({
+	            url: 'open_api.php',
+	            async: false,
+	            type: 'GET',
+	            dataType: 'text',
+	            data: {lat: lat, long: long},
+	            success: function (response)
+	            {
+	                result = response;
+	            }
+	        });
+		} else {
+			result = false;
+		}
+		return result;
+	}
+
+</script>
+
+</html>
