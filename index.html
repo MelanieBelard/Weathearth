@@ -23,8 +23,17 @@
 
       function updateViewportSize() {
         camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix()
+        camera.layers.toggle(30);
+        camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function createAxesHelperOnLayer(layer) {
+        var axes = new THREE.AxesHelper(1.6);
+        axes.material.depthTest = false;
+        axes.renderOrder = 100;
+        axes.layers.set(layer);
+        return axes;
       }
 
       window.addEventListener("resize", updateViewportSize);
@@ -69,7 +78,7 @@
       textureLoader.setPath("maps/earth/earth_")
       var earthMat = new THREE.MeshStandardMaterial({
 
-        map: textureLoader.load("color.jpg"),
+        map: textureLoader.load("color1.jpg"),
         normalMap: textureLoader.load("normal.jpg"),
         metalness: 0,
         roughness: .8
@@ -80,6 +89,7 @@
 
       var earthPlanet = new THREE.Mesh(planetGeo, earthMat);
       //earthPlanet.scale.setScalar(.27);
+      earth.add(createAxesHelperOnLayer(30));
       earth.add(earthPlanet);
 
       // clouds
@@ -160,7 +170,7 @@
           var longitude = Math.atan(point.x / point.z);
           alert("latitude : " + THREE.Math.radToDeg(latitude) + " longitude : " + THREE.Math.radToDeg(longitude));
 
-          dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z + 0.01));
+          dotGeometry.vertices.push(new THREE.Vector3( point.x, point.y, point.z + 0.01));
           if(weatherPoint != undefined) {
             scene.remove(weatherPoint);
           }
