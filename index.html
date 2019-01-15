@@ -91,12 +91,12 @@
       scene.add(earth);
 
 
-
       // earth planet
       textureLoader.setPath("maps/earth/earth_")
       var earthMat = new THREE.MeshStandardMaterial({
 
-        map: textureLoader.load("map.jpg"),
+        map: textureLoader.load("color1.jpg"),
+        normalMap: textureLoader.load("normal.jpg"),
         metalness: 0,
         roughness: .8
 
