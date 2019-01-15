@@ -150,12 +150,12 @@
         // récupérer les coordonées sur la planet
         raycaster.setFromCamera( mouse, camera );
 
-        var intersects = raycaster.intersectObjects(scene.children, true);
-        var point = intersects[0].point;
+        var intersects = raycaster.intersectObjects(earth.children, true);
         var dotGeometry = new THREE.Geometry();
         var dotMaterial = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false } );
 
         if (intersects.length > 0) {
+          var point = intersects[0].point;
           var latitude = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2));
           var longitude = Math.atan(point.x / point.z);
           alert("latitude : " + THREE.Math.radToDeg(latitude) + " longitude : " + THREE.Math.radToDeg(longitude));
