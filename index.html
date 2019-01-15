@@ -23,17 +23,8 @@
 
       function updateViewportSize() {
         camera.aspect = window.innerWidth / window.innerHeight;
-        camera.layers.toggle(30);
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-
-      function createAxesHelperOnLayer(layer) {
-        var axes = new THREE.AxesHelper(1.6);
-        axes.material.depthTest = false;
-        axes.renderOrder = 100;
-        axes.layers.set(layer);
-        return axes;
       }
 
       window.addEventListener("resize", updateViewportSize);
