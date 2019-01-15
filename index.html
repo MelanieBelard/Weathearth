@@ -46,18 +46,9 @@
       ]);
       scene.background = milkyway;
 
-      function createAxesHelperOnLayer(layer) {
-        var axes = new THREE.AxesHelper(1.6);
-        axes.material.depthTest = false;
-        axes.renderOrder = 100;
-        axes.layers.set(layer);
-        return axes;
-      }
-
       // earth
       var planetGeo = new THREE.SphereGeometry(1, 64, 48);
       var earth = new THREE.Group();
-      earth.add(createAxesHelperOnLayer(30));
       scene.add(earth);
 
       // atmosphere
@@ -85,7 +76,6 @@
       });
       var earthPlanet = new THREE.Mesh(planetGeo, earthMat);
       earth.add(earthPlanet);
-      earthPlanet.add(createAxesHelperOnLayer(30));
 
       // clouds
       /*var cloudsMat = new THREE.MeshStandardMaterial({
@@ -99,13 +89,13 @@
       var clouds = new THREE.Mesh(planetGeo, cloudsMat);
       clouds.scale.setScalar(1.005);
       earth.add(clouds);
-      clouds.add(createAxesHelperOnLayer(30));
+ 
 
       // moon
       textureLoader.setPath("maps/moon/moon_")
       var moon = new THREE.Group();
       earth.add(moon);
-      moon.add(createAxesHelperOnLayer(31));
+   
 
       var moonMat = new THREE.MeshStandardMaterial({
 
@@ -122,7 +112,6 @@
       var moonPlanet = new THREE.Mesh(planetGeo, moonMat);
       moonPlanet.scale.setScalar(.2723);
       moonPlanet.position.z=24;
-      moonPlanet.add(createAxesHelperOnLayer(31));
       moon.add(moonPlanet);*/
 
       // lights
@@ -155,10 +144,14 @@
         // récupérer les coordonées sur la planet
         raycaster.setFromCamera( mouse, camera );
 
-        var intersects = raycaster.intersectObjects(scene.children, true);
+        var intersects = raycaster.intersectObjects(earth.children, true);
+        var dotGeometry = new THREE.Geometry();
+        var dotMaterial = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false } );
 
         if (intersects.length > 0) {
-          alert(intersects[0].point.x + "  " + intersects[0].point.y + "   " + intersects[0].point.z);
+          console.log(intersects[0].point.x + "  " + intersects[0].point.y + "   " + intersects[0].point.z);
+          dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z));
+          scene.add( new THREE.Points( dotGeometry, dotMaterial ) );
         }
       }
 
