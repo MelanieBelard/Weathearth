@@ -22,7 +22,8 @@
 
       function updateViewportSize() {
         camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix()
+        camera.layers.toggle(30);
+        camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
@@ -57,7 +58,6 @@
       // earth
       var planetGeo = new THREE.SphereGeometry(1, 64, 48);
       var earth = new THREE.Group();
-      earth.add(createAxesHelperOnLayer(30));
       scene.add(earth);
 
       // atmosphere
@@ -83,9 +83,12 @@
         roughness: .8
 
       });
+      earthMat.map.offset.x = .25;
+      earthMat.map.wrapS = THREE.RepeatWrapping;
+
       var earthPlanet = new THREE.Mesh(planetGeo, earthMat);
+      //earthPlanet.scale.setScalar(.27);
       earth.add(earthPlanet);
-      earthPlanet.add(createAxesHelperOnLayer(30));
 
       // clouds
       /*var cloudsMat = new THREE.MeshStandardMaterial({
@@ -156,9 +159,13 @@
         raycaster.setFromCamera( mouse, camera );
 
         var intersects = raycaster.intersectObjects(scene.children, true);
+        var point = intersects[0].point;
 
         if (intersects.length > 0) {
-          alert(intersects[0].point.x + "  " + intersects[0].point.y + "   " + intersects[0].point.z);
+          var latitude = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2));
+          //var b = Math.acos(point.y / a);
+          var longitude = Math.atan(point.x / point.z);
+          alert("latitude : " + THREE.Math.radToDeg(latitude) + " longitude : " + THREE.Math.radToDeg(longitude));
         }
       }
 
