@@ -15,6 +15,7 @@
     <script src="js/OrbitControls.js"></script>
     <script src="js/dat.gui.min.js"></script>
     <script>
+
       var renderer = new THREE.WebGLRenderer();
       document.body.appendChild(renderer.domElement);
 
@@ -22,8 +23,7 @@
 
       function updateViewportSize() {
         camera.aspect = window.innerWidth / window.innerHeight;
-        camera.layers.toggle(30);
-        camera.updateProjectionMatrix();
+        camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
@@ -44,16 +44,8 @@
         "4.jpg",
         "5.jpg",
         "6.jpg",
-      ]);
+        ]);
       scene.background = milkyway;
-
-      function createAxesHelperOnLayer(layer) {
-        var axes = new THREE.AxesHelper(1.6);
-        axes.material.depthTest = false;
-        axes.renderOrder = 100;
-        axes.layers.set(layer);
-        return axes;
-      }
 
       // earth
       var planetGeo = new THREE.SphereGeometry(1, 64, 48);
@@ -102,13 +94,13 @@
       var clouds = new THREE.Mesh(planetGeo, cloudsMat);
       clouds.scale.setScalar(1.005);
       earth.add(clouds);
-      clouds.add(createAxesHelperOnLayer(30));
+ 
 
       // moon
       textureLoader.setPath("maps/moon/moon_")
       var moon = new THREE.Group();
       earth.add(moon);
-      moon.add(createAxesHelperOnLayer(31));
+   
 
       var moonMat = new THREE.MeshStandardMaterial({
 
@@ -125,7 +117,6 @@
       var moonPlanet = new THREE.Mesh(planetGeo, moonMat);
       moonPlanet.scale.setScalar(.2723);
       moonPlanet.position.z=24;
-      moonPlanet.add(createAxesHelperOnLayer(31));
       moon.add(moonPlanet);*/
 
       // lights
@@ -153,6 +144,7 @@
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       }
+      var weatherPoint; 
 
       function onClick ( event ) {
         // récupérer les coordonées sur la planet
@@ -160,12 +152,20 @@
 
         var intersects = raycaster.intersectObjects(scene.children, true);
         var point = intersects[0].point;
+        var dotGeometry = new THREE.Geometry();
+        var dotMaterial = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false } );
 
         if (intersects.length > 0) {
           var latitude = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2));
-          //var b = Math.acos(point.y / a);
           var longitude = Math.atan(point.x / point.z);
           alert("latitude : " + THREE.Math.radToDeg(latitude) + " longitude : " + THREE.Math.radToDeg(longitude));
+
+          dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z + 0.01));
+          if(weatherPoint != undefined) {
+            scene.remove(weatherPoint);
+          }
+          weatherPoint = new THREE.Points( dotGeometry, dotMaterial );
+          scene.add( weatherPoint );
         }
       }
 
@@ -184,7 +184,7 @@
         earthPlanet.rotation.y = rotationTerre;
         clouds.rotation.y = rotationTerre * params.vitesseNuages ;
         moon.rotation.y = rotationTerre / 27.321;*/
-        earth.getWorldPosition(wsEarthPosition)
+        earth.getWorldPosition(wsEarthPosition);
         //moonPlanet.lookAt(wsEarthPosition);
 
         requestAnimationFrame(animate);
@@ -193,4 +193,4 @@
       requestAnimationFrame(animate);
     </script>
   </body>
-</html>
+  </html>
