@@ -2,18 +2,55 @@
 <html>
   <head>
     <meta charset=utf-8>
-    <title>three.js app</title>
+    <title>Weathearth</title>
     <style>
       body {
         margin: 0;
         overflow: hidden;
+        font-family: 'Trebuchet MS', sans-serif;
+      }
+      #panneau {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffffff85;
+        text-align: center;
+        padding: 5px;
+        box-shadow: #555 0px 0px 3px;
+      }
+      #panneau .icon {
+        width: 100px;
+        height: auto;
+      }
+      table {
+        border-collapse: collapse;
+        background: #fefefe75;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        min-width: 100px;
       }
     </style>
   </head>
-  <body>
+
+    <div id="panneau">
+      <img class="icon" src="svg/na.svg">
+      <p>Il est <span id="time">...</span><br><small>(heure française)</small></p>
+      <table>
+        <tr>
+          <th>Température</th>
+          <td id="temperature"></td>
+        </tr>
+        <tr>
+          <th>Résumé</th>
+          <td id="summary"></td>
+        </tr>
+      </table>
+    </div>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/dat.gui.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
     <script>
 
       var renderer = new THREE.WebGLRenderer();
@@ -52,19 +89,6 @@
       var earth = new THREE.Group();
       scene.add(earth);
 
-      // atmosphere
-      /*var atmosphereMat = new THREE.MeshBasicMaterial({
-
-        color: 0x1594c6,
-        transparent:true,
-        side: THREE.BackSide,
-        opacity: .3,
-
-      });
-      var atmosphere = new THREE.Mesh(planetGeo, atmosphereMat);
-      atmosphere.scale.setScalar(1.01);
-      earth.add(atmosphere);*/
-
       // earth planet
       textureLoader.setPath("maps/earth/earth_")
       var earthMat = new THREE.MeshStandardMaterial({
@@ -82,50 +106,10 @@
       //earthPlanet.scale.setScalar(.27);
       earth.add(earthPlanet);
 
-      // clouds
-      /*var cloudsMat = new THREE.MeshStandardMaterial({
-
-        transparent: true,
-        alphaMap: textureLoader.load("cloud.jpg"),
-        metalness: 0,
-        roughness: .5
-
-      });
-      var clouds = new THREE.Mesh(planetGeo, cloudsMat);
-      clouds.scale.setScalar(1.005);
-      earth.add(clouds);
- 
-
-      // moon
-      textureLoader.setPath("maps/moon/moon_")
-      var moon = new THREE.Group();
-      earth.add(moon);
-   
-
-      var moonMat = new THREE.MeshStandardMaterial({
-
-        map: textureLoader.load("color.jpg"),
-        metalness: 0,
-        roughness: .9
-
-      });
-      // on déplace la texture le long de l'axe U pour aligner la face visible
-      // depuis la terre.
-      moonMat.map.offset = new THREE.Vector2(.3, 0);
-      moonMat.map.wrapS = THREE.RepeatWrapping;
-
-      var moonPlanet = new THREE.Mesh(planetGeo, moonMat);
-      moonPlanet.scale.setScalar(.2723);
-      moonPlanet.position.z=24;
-      moon.add(moonPlanet);*/
 
       // lights
       var ambientLight = new THREE.AmbientLight(0xffffff , 1.1); // soft white light
       scene.add(ambientLight);
-
-      /*var sun = new THREE.DirectionalLight(0xffffff, 1.1);
-      sun.position.set(50, 15, 50);
-      scene.add(sun);*/
 
       camera.position.z = 2;
 
@@ -156,9 +140,10 @@
 
         if (intersects.length > 0) {
           var point = intersects[0].point;
-          var latitude = Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2));
-          var longitude = Math.atan(point.x / point.z);
-          alert("latitude : " + THREE.Math.radToDeg(latitude) + " longitude : " + THREE.Math.radToDeg(longitude));
+          var latitude = THREE.Math.radToDeg(Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2)));
+          var longitude = THREE.Math.radToDeg(Math.atan(point.x / point.z));
+          console.log("latitude : " + latitude + " longitude : " + longitude);
+          getWeather(latitude, longitude);
 
           dotGeometry.vertices.push(new THREE.Vector3( point.x, point.y, point.z + 0.01));
           if(weatherPoint != undefined) {
@@ -176,21 +161,91 @@
         if (start == null) {
           start = t;
         }
-        //var delai = t - start;
 
         controls.update();
-
-        /*var rotationTerre = 2 * Math.PI * delai / (params.dureeJournee * 1000);
-        earthPlanet.rotation.y = rotationTerre;
-        clouds.rotation.y = rotationTerre * params.vitesseNuages ;
-        moon.rotation.y = rotationTerre / 27.321;*/
         earth.getWorldPosition(wsEarthPosition);
-        //moonPlanet.lookAt(wsEarthPosition);
-
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
       }
       requestAnimationFrame(animate);
+
+
+      // PARTIE API
+
+        $("#json").text('...');
+        // $("#coordonnees").text('...');
+        $("#temperature").text('...');
+        $("#summary").text('...');
+        $("#time").text('...');
+
+      function getWeather(lat = 44.8555246, long = -0.572642) {
+
+        var coordonnees = '('+lat+', '+long+')';
+        var json    = getJsonFromApi(lat, long);
+        var data    = jQuery.parseJSON(json);
+
+        var temperature = getTemperature(data);
+        var summary   = getSummary(data);
+        var icon    = getIcon(data);
+        var time    = getTime(data);
+
+        console.log(coordonnees);
+        console.log(temperature);
+
+        $("#temperature").text(temperature);
+        $("#summary").text(summary);
+        $("#time").text(time);
+        $(".icon").attr('src', 'svg/'+icon+'.svg');
+      }
+
+      function getTemperature(data) {
+        if (data.currently.temperature !== 0) {
+          return data.currently.temperature+'°C';
+        }
+        return false;
+      }
+
+      function getSummary(data) {
+        if (data.currently.summary !== 0) {
+          return data.currently.summary;
+        }
+        return false;
+      }
+
+      function getIcon(data) {
+        if (data.currently.icon !== 0) {
+          return data.currently.icon;
+        }
+        return false;
+      }
+
+      function getTime(data) {
+        if (data.currently.time !== 0) {
+          return new Date((data.currently.time + 3600)*1000).toLocaleTimeString("fr-FR");
+        }
+        return false;
+      }
+
+      function getJsonFromApi(lat, long) {
+        var result = '';
+        if (lat.length !== 0 && long.length !== 0) {
+              $.ajax({
+                  url: 'open_api.php',
+                  async: false,
+                  type: 'GET',
+                  dataType: 'text',
+                  data: {lat: lat, long: long},
+                  success: function (response)
+                  {
+                      result = response;
+                  }
+              });
+        } else {
+          result = false;
+        }
+        return result;
+      }
+
     </script>
   </body>
   </html>
