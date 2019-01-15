@@ -152,7 +152,7 @@
 
         var intersects = raycaster.intersectObjects(earth.children, true);
         var dotGeometry = new THREE.Geometry();
-        var dotMaterial = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false } );
+        var dotMaterial = new THREE.PointsMaterial( { color : 0xFF0000 , size: 10, sizeAttenuation: false } );
 
         if (intersects.length > 0) {
           var point = intersects[0].point;
