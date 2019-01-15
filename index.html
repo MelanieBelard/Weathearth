@@ -150,7 +150,7 @@
 
         if (intersects.length > 0) {
           console.log(intersects[0].point.x + "  " + intersects[0].point.y + "   " + intersects[0].point.z);
-          dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z));
+          dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z + 0.01));
           scene.add( new THREE.Points( dotGeometry, dotMaterial ) );
         }
       }
