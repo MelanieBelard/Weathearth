@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset=utf-8>
-    <title>three.js app</title>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <script src="js/three.min.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script src="js/dat.gui.min.js"></script>
-    <script>
-      var renderer = new THREE.WebGLRenderer();
-      document.body.appendChild(renderer.domElement);
+<head>
+  <meta charset=utf-8>
+  <title>three.js app</title>
+  <style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
+</head>
+<body>
+  <script src="js/three.min.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <script src="js/dat.gui.min.js"></script>
+  <script>
+    var renderer = new THREE.WebGLRenderer();
+    document.body.appendChild(renderer.domElement);
 
-      var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
+    var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
 
-      function updateViewportSize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix()
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
+    function updateViewportSize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 
-      window.addEventListener("resize", updateViewportSize);
-      updateViewportSize();
+    window.addEventListener("resize", updateViewportSize);
+    updateViewportSize();
 
-      var scene = new THREE.Scene();
+    var scene = new THREE.Scene();
 
-      var cubeTextureLoader = new THREE.CubeTextureLoader();
-      var textureLoader = new THREE.TextureLoader();
+    var cubeTextureLoader = new THREE.CubeTextureLoader();
+    var textureLoader = new THREE.TextureLoader();
 
       // milkyway
       cubeTextureLoader.setPath('maps/milkyway/');
@@ -43,7 +43,7 @@
         "4.jpg",
         "5.jpg",
         "6.jpg",
-      ]);
+        ]);
       scene.background = milkyway;
 
       // earth
@@ -139,6 +139,7 @@
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       }
+      var weatherPoint; 
 
       function onClick ( event ) {
         // récupérer les coordonées sur la planet
@@ -147,11 +148,14 @@
         var intersects = raycaster.intersectObjects(earth.children, true);
         var dotGeometry = new THREE.Geometry();
         var dotMaterial = new THREE.PointsMaterial( { size: 10, sizeAttenuation: false } );
-
         if (intersects.length > 0) {
           console.log(intersects[0].point.x + "  " + intersects[0].point.y + "   " + intersects[0].point.z);
           dotGeometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z + 0.01));
-          scene.add( new THREE.Points( dotGeometry, dotMaterial ) );
+          if(weatherPoint != undefined) {
+            scene.remove(weatherPoint);
+          }
+          weatherPoint = new THREE.Points( dotGeometry, dotMaterial );
+          scene.add( weatherPoint );
         }
       }
 
@@ -179,4 +183,4 @@
       requestAnimationFrame(animate);
     </script>
   </body>
-</html>
+  </html>
