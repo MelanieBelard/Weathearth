@@ -95,7 +95,7 @@
       textureLoader.setPath("maps/earth/earth_")
       var earthMat = new THREE.MeshStandardMaterial({
 
-        map: textureLoader.load("color1.jpg"),
+        map: textureLoader.load("color.jpg"),
         normalMap: textureLoader.load("normal.jpg"),
         metalness: 0,
         roughness: .8
@@ -106,11 +106,12 @@
 
       var earthPlanet = new THREE.Mesh(planetGeo, earthMat);
       //earthPlanet.scale.setScalar(.27);
+      earth.add(new THREE.AxesHelper(1.3));
       earth.add(earthPlanet);
 
 
       // lights
-      var ambientLight = new THREE.AmbientLight(0xffffff , 1.1); // soft white light
+      var ambientLight = new THREE.AmbientLight(0xffffff , 1.1);
       scene.add(ambientLight);
 
       camera.position.z = 2;
@@ -142,10 +143,10 @@
 
         if (intersects.length > 0) {
           var point = intersects[0].point;
-          var latitude = THREE.Math.radToDeg(Math.sqrt(Math.pow(point.z, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2)));
+          var latitude = THREE.Math.radToDeg(Math.acos(point.z / Math.sqrt(Math.pow(point.z, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2))));
           var longitude = THREE.Math.radToDeg(Math.atan(point.x / point.z));
           console.log("latitude : " + latitude + " longitude : " + longitude);
-          getWeather(latitude, longitude);
+          //getWeather(latitude, longitude);
 
           dotGeometry.vertices.push(new THREE.Vector3( point.x, point.y, point.z + 0.01));
           if(weatherPoint != undefined) {
