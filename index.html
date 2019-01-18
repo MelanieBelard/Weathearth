@@ -106,7 +106,6 @@
 
       var earthPlanet = new THREE.Mesh(planetGeo, earthMat);
       //earthPlanet.scale.setScalar(.27);
-      earth.add(new THREE.AxesHelper(1.3));
       earth.add(earthPlanet);
 
 
@@ -146,9 +145,9 @@
           var latitude = THREE.Math.radToDeg(Math.acos(point.z / Math.sqrt(Math.pow(point.z, 2) + Math.pow(point.x, 2) + Math.pow(point.y, 2))));
           var longitude = THREE.Math.radToDeg(Math.atan(point.x / point.z));
           console.log("latitude : " + latitude + " longitude : " + longitude);
-          //getWeather(latitude, longitude);
+          getWeather(latitude, longitude);
 
-          dotGeometry.vertices.push(new THREE.Vector3( point.x, point.y, point.z + 0.01));
+          dotGeometry.vertices.push(new THREE.Vector3( point.x, point.y, point.z));
           if(weatherPoint != undefined) {
             scene.remove(weatherPoint);
           }
