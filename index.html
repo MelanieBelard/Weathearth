@@ -28,7 +28,12 @@
       }
       th, td {
         border: 1px solid #ddd;
-        min-width: 100px;
+      }
+      th {
+        width: 120px;
+      }
+      td {
+        width: 200px;
       }
     </style>
   </head>
@@ -36,6 +41,11 @@
     <div id="panneau">
       <a class="api" target="_blank" href="#"><img class="icon" src="svg/na.svg"></a>
       <!-- <p>Il est <span id="time">...</span><br><small>(heure française)</small></p> -->
+      <table>
+        <tr>
+          <th>Timezone</th>
+          <td id="timezone"></td>
+        </tr>
       <table>
         <tr>
           <th>Température</th>
@@ -176,6 +186,7 @@
 
         $("#json").text('...');
         // $("#coordonnees").text('...');
+        $("#timezone").text('...');
         $("#temperature").text('...');
         $("#summary").text('...');
         $("#time").text('...');
@@ -190,14 +201,23 @@
         var data    = jQuery.parseJSON(json);
 
         var temperature = getTemperature(data);
+        var timezone = getTimezone(data);
         var summary   = getSummary(data);
         var icon    = getIcon(data);
         var time    = getTime(data);
 
+        $("#timezone").text(timezone);
         $("#temperature").text(temperature);
         $("#summary").text(summary);
         $("#time").text(time);
         $(".icon").attr('src', 'svg/'+icon+'.svg');
+      }
+
+      function getTimezone(data) {
+        if (data.timezone !== 0) {
+          return data.timezone;
+        }
+        return false;
       }
 
       function getTemperature(data) {
