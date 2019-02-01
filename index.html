@@ -34,8 +34,8 @@
   </head>
 
     <div id="panneau">
-      <img class="icon" src="svg/na.svg">
-      <p>Il est <span id="time">...</span><br><small>(heure française)</small></p>
+      <a class="api" target="_blank" href="#"><img class="icon" src="svg/na.svg"></a>
+      <!-- <p>Il est <span id="time">...</span><br><small>(heure française)</small></p> -->
       <table>
         <tr>
           <th>Température</th>
@@ -130,7 +130,7 @@
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       }
-      var weatherPoint; 
+      var weatherPoint;
 
       function onClick ( event ) {
         // récupérer les coordonées sur la planet
@@ -181,6 +181,9 @@
         $("#time").text('...');
 
       function getWeather(lat = 44.8555246, long = -0.572642) {
+        var api = "https://api.darksky.net/forecast/8e3584c81b63a5c4157f4c04d2eda60c/"+lat+","+long+"?exclude=minutely-hourly-daily&units=auto&lang=fr"
+        console.log("CALL TO: "+api);
+        $(".api").attr('href', api);
 
         var coordonnees = '('+lat+', '+long+')';
         var json    = getJsonFromApi(lat, long);
@@ -190,9 +193,6 @@
         var summary   = getSummary(data);
         var icon    = getIcon(data);
         var time    = getTime(data);
-
-        console.log(coordonnees);
-        console.log(temperature);
 
         $("#temperature").text(temperature);
         $("#summary").text(summary);
